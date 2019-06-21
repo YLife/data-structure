@@ -53,5 +53,5 @@ public interface Tree {
      *-------------------------------------------------------------
      *    2019/6/17      yanglun            v1.0.0              修改原因
      */
-    boolean delete(Object object);
+    boolean delete(Object object) throws ArrayException;
 }
