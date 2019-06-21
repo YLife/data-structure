@@ -51,9 +51,50 @@ public class BinaryTree implements Tree {
     }
 
     @Override
-    public boolean delete(Object object) {
-
+    public boolean delete(Object object) throws ArrayException {
+        // 找到被删除的节点
+        Node currentNode = root;
+        Node parentNode = currentNode;
+        boolean isLeftNode = false;
+        while (trans2Integer(currentNode.getData()) != trans2Integer(object)) {
+            parentNode = currentNode;
+            if (trans2Integer(object) > trans2Integer(currentNode.getData())) {
+                currentNode = currentNode.getRightNode();
+            } else if (trans2Integer(object) < trans2Integer(currentNode.getData())) {
+                currentNode = currentNode.getLeftNode();
+            } else {
+                break;
+            }
+        }
+        if (currentNode == null) {
+            ExceptionUtil.throwArrayException("该节点在二叉树中不存在！！！");
+        }
+        // 被删除的节点为叶子节点
+        // 被删除的节点只有左子节点
+        // 被删除的节点只有右子节点
+        // 被删除的节点左、右子节点都有
         return false;
+    }
+
+    // 获取最大值
+    public int getMaxValue() throws ArrayException {
+        Node currentNode = root;
+        Node maxNode = currentNode;
+        while (currentNode != null) {
+            maxNode = currentNode;
+            currentNode = currentNode.getRightNode();
+        }
+        return trans2Integer(currentNode.getData());
+    }
+
+    public int getMinValue() throws ArrayException {
+        Node currentNode = root;
+        Node minNode = currentNode;
+        while (currentNode != null) {
+            minNode = currentNode;
+            currentNode = currentNode.getLeftNode();
+        }
+        return trans2Integer(currentNode.getData());
     }
 
     // 将对象转换为integer
