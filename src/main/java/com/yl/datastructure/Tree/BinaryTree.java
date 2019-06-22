@@ -8,12 +8,12 @@ public class BinaryTree implements Tree {
     private Node root;
 
     @Override
-    public Node find(Object object) throws ArrayException {
+    public Node find(int data) throws ArrayException {
         Node currentNode = root;
         while (currentNode != null) {
-            if (trans2Integer(currentNode.getData()) < trans2Integer(object)) {
+            if (currentNode.getData() < data) {
                 currentNode = currentNode.getRightNode();
-            } else if (trans2Integer(currentNode.getData()) > trans2Integer(object)) {
+            } else if (currentNode.getData() > data) {
                 currentNode = currentNode.getLeftNode();
             } else {
                 return currentNode;
@@ -23,27 +23,27 @@ public class BinaryTree implements Tree {
     }
 
     @Override
-    public boolean insert(Object object) throws ArrayException {
-        Node node = new Node(object);
+    public boolean insert(int data) throws ArrayException {
+        Node node = new Node(data);
         if (root == null) {
             root = node;
-        } else {
-            Node currentNode = root;
-            Node parentNode = null;
-            while (currentNode != null) {
-                parentNode = currentNode;
-                if (trans2Integer(currentNode.getData()) < trans2Integer(object)) {
-                    currentNode = currentNode.getRightNode();
-                    if (currentNode == null) {
-                        parentNode.setRightNode(node);
-                        return true;
-                    }
-                } else if (trans2Integer(currentNode.getData()) > trans2Integer(object)) {
-                    currentNode = currentNode.getLeftNode();
-                    if (currentNode == null) {
-                        parentNode.setLeftNode(node);
-                        return true;
-                    }
+            return true;
+        }
+        Node currentNode = root;
+        Node parentNode;
+        while (currentNode.getData() != data) {
+            parentNode = currentNode;
+            if (currentNode.getData() > data) {
+                currentNode = currentNode.getLeftNode();
+                if (currentNode == null) {
+                    parentNode.setLeftNode(node);
+                    return true;
+                }
+            } else {
+                currentNode = currentNode.getRightNode();
+                if (currentNode == null) {
+                    parentNode.setRightNode(node);
+                    return true;
                 }
             }
         }
@@ -51,61 +51,150 @@ public class BinaryTree implements Tree {
     }
 
     @Override
-    public boolean delete(Object object) throws ArrayException {
-        // 找到被删除的节点
+    public boolean delete(int data) throws ArrayException {
+        // 找到需要删除的节点
         Node currentNode = root;
         Node parentNode = currentNode;
         boolean isLeftNode = false;
-        while (trans2Integer(currentNode.getData()) != trans2Integer(object)) {
+        while (currentNode != null) {
             parentNode = currentNode;
-            if (trans2Integer(object) > trans2Integer(currentNode.getData())) {
-                currentNode = currentNode.getRightNode();
-            } else if (trans2Integer(object) < trans2Integer(currentNode.getData())) {
+            if (currentNode.getData() > data) {
                 currentNode = currentNode.getLeftNode();
-            } else {
-                break;
+                if (currentNode.getData() == data) {
+                    isLeftNode = true;
+                    break;
+                }
+            } else if (currentNode.getData() < data) {
+                currentNode = currentNode.getRightNode();
+                if (currentNode.getData() == data) {
+                    break;
+                }
             }
         }
         if (currentNode == null) {
-            ExceptionUtil.throwArrayException("该节点在二叉树中不存在！！！");
+            return false;
         }
-        // 被删除的节点为叶子节点
-        // 被删除的节点只有左子节点
-        // 被删除的节点只有右子节点
-        // 被删除的节点左、右子节点都有
-        return false;
+        if (currentNode.getLeftNode() == null && currentNode.getRightNode() == null) { // 左、右子节点为空
+            if (isLeftNode) {
+                parentNode.setLeftNode(null);
+            } else {
+                parentNode.setRightNode(null);
+            }
+            return true;
+        } else if (currentNode.getLeftNode() != null && currentNode.getRightNode() == null) { // 左子节点不为空，右子节点为空
+            if (isLeftNode) {
+                parentNode.setLeftNode(currentNode.getLeftNode());
+            } else {
+                parentNode.setRightNode(currentNode.getLeftNode());
+            }
+            return true;
+        } else if (currentNode.getRightNode() != null && currentNode.getLeftNode() == null) { // 右子节点不为空，左子节点为空
+            if (isLeftNode) {
+                parentNode.setLeftNode(currentNode.getRightNode());
+            } else {
+                parentNode.setRightNode(currentNode.getRightNode());
+            }
+            return true;
+        } else { // 左、右子节点都不为空
+            // 获取删除节点后的后继节点
+            Node successor = getSuccessor(currentNode);
+            infixOrder(successor);
+            if (isLeftNode) {
+                parentNode.setLeftNode(successor);
+            } else {
+                parentNode.setRightNode(successor);
+            }
+            successor.setLeftNode(currentNode.getLeftNode());
+        }
+        return true;
     }
 
-    // 获取最大值
-    public int getMaxValue() throws ArrayException {
-        Node currentNode = root;
-        Node maxNode = currentNode;
-        while (currentNode != null) {
-            maxNode = currentNode;
-            currentNode = currentNode.getRightNode();
+    // 获取删除后的后继节点
+    private Node getSuccessor(Node delNode) {
+        Node successorParent = delNode;
+        Node successor = delNode;
+        Node current = delNode.getRightNode();
+        // 寻找删除节点右子树的最左子节点
+        while (current != null) {
+            successorParent = successor;
+            successor = current;
+            current = current.getLeftNode();
         }
-        return trans2Integer(currentNode.getData());
+        if (successor != delNode.getRightNode()) {
+            successorParent.setLeftNode(successor.getRightNode());
+            successor.setRightNode(delNode.getRightNode());
+        }
+        return successor;
     }
 
-    public int getMinValue() throws ArrayException {
-        Node currentNode = root;
-        Node minNode = currentNode;
-        while (currentNode != null) {
-            minNode = currentNode;
-            currentNode = currentNode.getLeftNode();
+    @Override
+    public void infixOrder(Node current){
+        if(current != null){
+            infixOrder(current.getLeftNode());
+            System.out.print(current.getData() + " ");
+            infixOrder(current.getRightNode());
         }
-        return trans2Integer(currentNode.getData());
     }
 
-    // 将对象转换为integer
-    private Integer trans2Integer(Object object) throws ArrayException {
-        Integer number = null;
-        try {
-            number = (Integer) object;
-        } catch (Exception e) {
-            ExceptionUtil.throwArrayException("操作的对象不是number型的！！！");
+    @Override
+    public void preOrder(Node current){
+        if(current != null){
+            System.out.print(current.getData() + " ");
+            preOrder(current.getLeftNode());
+            preOrder(current.getRightNode());
         }
-        return number;
+    }
+
+    @Override
+    public void postOrder(Node current){
+        if(current != null){
+            postOrder(current.getLeftNode());
+            postOrder(current.getRightNode());
+            System.out.print(current.getData() + " ");
+        }
+    }
+
+
+    public static void main(String[] args) throws ArrayException {
+        BinaryTree binaryTree = new BinaryTree();
+        binaryTree.insert(15);
+        binaryTree.insert(19);
+        binaryTree.insert(7);
+        binaryTree.insert(4);
+        binaryTree.insert(5);
+        binaryTree.insert(12);
+        binaryTree.insert(9);
+        binaryTree.insert(13);
+        binaryTree.insert(10);
+        binaryTree.infixOrder(binaryTree.root);
+        System.out.println("===");
+        binaryTree.preOrder(binaryTree.root);
+        System.out.println("===");
+        binaryTree.postOrder(binaryTree.root);
+        System.out.println("===");
+        Node node = binaryTree.find(10);
+        System.out.println(node.getData());
+        binaryTree.delete(7);
+        System.out.println("===测试两个子节点场景===");
+        binaryTree.infixOrder(binaryTree.root);
+        System.out.println();
+        binaryTree.preOrder(binaryTree.root);
+        System.out.println();
+        binaryTree.postOrder(binaryTree.root);
+        binaryTree.delete(4);
+        System.out.println("===测试一个子节点场景===");
+        binaryTree.infixOrder(binaryTree.root);
+        System.out.println();
+        binaryTree.preOrder(binaryTree.root);
+        System.out.println();
+        binaryTree.postOrder(binaryTree.root);
+        binaryTree.delete(5);
+        System.out.println("===测试无子节点场景===");
+        binaryTree.infixOrder(binaryTree.root);
+        System.out.println();
+        binaryTree.preOrder(binaryTree.root);
+        System.out.println();
+        binaryTree.postOrder(binaryTree.root);
     }
 
 }
