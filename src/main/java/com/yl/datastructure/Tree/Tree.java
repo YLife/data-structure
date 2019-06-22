@@ -26,7 +26,7 @@ public interface Tree {
      *-------------------------------------------------------------
      *    2019/6/17      yanglun            v1.0.0              修改原因
      */
-    Node find(Object object) throws ArrayException;
+    Node find(int data) throws ArrayException;
 
     /**
      * @Function: com.yl.datastructure.Tree.Tree::
@@ -39,7 +39,7 @@ public interface Tree {
      *-------------------------------------------------------------
      *    2019/6/17      yanglun            v1.0.0              修改原因
      */
-    boolean insert(Object object) throws ArrayException;
+    boolean insert(int data) throws ArrayException;
 
     /**
      * @Function: com.yl.datastructure.Tree.Tree::delete
@@ -53,5 +53,50 @@ public interface Tree {
      *-------------------------------------------------------------
      *    2019/6/17      yanglun            v1.0.0              修改原因
      */
-    boolean delete(Object object) throws ArrayException;
+    boolean delete(int data) throws ArrayException;
+
+    /**
+     * @Function: com.yl.datastructure.Tree.Tree::infixOrder
+     * @description  中序遍历
+     *      左子树 -> 根节点 -> 右子树
+     * @throws Exception
+     * @version v1.1.0
+     * @author yanglun
+     * @date  2019/6/23 0:12
+     * Modification History:
+     *   Date           Author          Version            Description
+     *-------------------------------------------------------------
+     *    2019/6/23      yanglun            v1.0.0              修改原因
+     */
+    void infixOrder(Node currentNode) throws Exception;
+
+    /**
+     * @Function: com.yl.datastructure.Tree.Tree::preOrder
+     * @description 前序遍历
+     *      根节点 -> 左子树 -> 右子树
+     * @throws Exception
+     * @version v1.1.0
+     * @author yanglun
+     * @date  2019/6/23 0:14
+     * Modification History:
+     *   Date           Author          Version            Description
+     *-------------------------------------------------------------
+     *    2019/6/23      yanglun            v1.0.0              修改原因
+     */
+    void preOrder(Node currentNode) throws Exception;
+
+    /**
+     * @Function: com.yl.datastructure.Tree.Tree::postOrder
+     * @description 后续遍历
+     *       左子树 -> 右子树 -> 根节点
+     * @throws Exception
+     * @version v1.1.0
+     * @author yanglun
+     * @date  2019/6/23 0:16
+     * Modification History:
+     *   Date           Author          Version            Description
+     *-------------------------------------------------------------
+     *    2019/6/23      yanglun            v1.0.0              修改原因
+     */
+    void postOrder(Node currentNode) throws Exception;
 }

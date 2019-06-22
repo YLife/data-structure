@@ -12,19 +12,19 @@ package com.yl.datastructure.Tree;
  */
 public class Node {
 
-    private Object data;// 节点数据
+    private int data;// 节点数据
     private Node leftNode;// 左子节点
     private Node rightNode;// 右子节点
 
-    public Node(Object data) {
+    public Node(int data) {
         this.data = data;
     }
 
-    public Object getData() {
+    public int getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(int data) {
         this.data = data;
     }
 
