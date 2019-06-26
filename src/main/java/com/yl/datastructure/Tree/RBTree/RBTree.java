@@ -54,14 +54,110 @@ public class RBTree<T extends Comparable<T>> {
                 targetNode.setRightNode(node);
             }
         }
-        // TODO 将二叉树重修修为一颗RB树
+        // TODO 将二叉树重修为一颗RB树
+
         return false;
     }
 
-    // 删除节点
+
     public boolean delete(T value) {
 
         return false;
+    }
+
+    private void insertFixUp(RBNode<T> node) {
+        RBNode<T> parent, gradeParent;
+
+        // 修正条件：父节点存在且父节点为红色
+        while ((parent = node.getParentNode()) != null && CommonConst.RBTreeConst.RED.equals(parent.getColor())) {
+            gradeParent = parent.getParentNode();
+            if (parent == gradeParent.getRightNode()) {
+                RBNode<T> uncle = gradeParent.getLeftNode();
+                // 如果叔叔节点也是红色，先进行变色
+                if (uncle != null && CommonConst.RBTreeConst.RED.equals(uncle.getColor())) {
+                    parent.setColor(CommonConst.RBTreeConst.BLACK);
+                    uncle.setColor(CommonConst.RBTreeConst.BLACK);
+                    gradeParent.setColor(CommonConst.RBTreeConst.RED);
+                    node = gradeParent;
+                    continue;
+                }
+                // 如果叔叔节点是黑色，父节点为右子节点
+                if (node == parent.getLeftNode()) {
+                    leftRotate(parent);
+                    RBNode<T> tmp = parent;// 交换父节点，为后面的右旋做准备
+                    parent = tmp;
+                    node = tmp;
+                }
+                // 如果叔叔节点是黑色，父节点为左子节点
+            } else {
+
+            }
+        }
+    }
+
+    /**
+     *  左旋
+     *
+     *     p                       p
+     *    /                       /
+     *   x                       y
+     *  / \                     / \
+     * lx  y      ----->       x  ry
+     *    / \                 / \
+     *   ly ry               lx ly
+     *
+     *
+     */
+    private void leftRotate(RBNode<T> x) {
+        RBNode<T> y = x.getRightNode();
+        x.setLeftNode(y.getLeftNode());
+        if (y.getLeftNode() != null) {
+            y.getLeftNode().setParentNode(x);
+        }
+        y.setParentNode(x.getParentNode());
+        if (x.getParentNode() == null) {
+            root = y;
+        } else {
+            if (x.getParentNode().getLeftNode() == x) {
+                x.getParentNode().setLeftNode(y);
+            } else {
+                x.getParentNode().setRightNode(y);
+            }
+        }
+        x.setParentNode(y);
+        y.setLeftNode(x);
+    }
+
+    /**
+     *  右旋
+     *        p                   p
+     *       /                   /
+     *      y                   x
+     *     / \                 / \
+     *    x  ry   ----->      lx  y
+     *   / \                     / \
+     * lx  rx                   rx ry
+     *
+     *
+     */
+    private void rightRotate(RBNode<T> y) {
+        RBNode<T> x = y.getRightNode();
+        y.setLeftNode(x.getRightNode());
+        if (x.getRightNode() != null) {
+            x.getRightNode().setParentNode(y);
+        }
+        x.setParentNode(y.getParentNode());
+        if (y.getParentNode() == null) {
+            root = x;
+        } else {
+            if (y.getParentNode().getLeftNode() == y) {
+                y.getParentNode().setLeftNode(x);
+            } else {
+                y.getParentNode().setRightNode(x);
+            }
+        }
+        y.setParentNode(x);
+        x.setRightNode(y);
     }
 
     private int compareValue(T orgin, T target) {
