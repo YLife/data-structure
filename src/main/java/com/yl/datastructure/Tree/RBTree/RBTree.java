@@ -54,14 +54,14 @@ public class RBTree<T extends Comparable<T>> {
                 targetNode.setRightNode(node);
             }
         }
-        // TODO 将二叉树重修为一颗RB树
-
+        // 将二叉树重修为一颗RB树
+        insertFixUp(node);
         return false;
     }
 
 
     public boolean delete(T value) {
-
+        // TODO 删除待实现，考虑是真实删除节点还是将节点标记为无效？？
         return false;
     }
 
@@ -71,8 +71,9 @@ public class RBTree<T extends Comparable<T>> {
         // 修正条件：父节点存在且父节点为红色
         while ((parent = node.getParentNode()) != null && CommonConst.RBTreeConst.RED.equals(parent.getColor())) {
             gradeParent = parent.getParentNode();
+            RBNode<T> uncle;
             if (parent == gradeParent.getRightNode()) {
-                RBNode<T> uncle = gradeParent.getLeftNode();
+                 uncle = gradeParent.getLeftNode();
                 // 如果叔叔节点也是红色，先进行变色
                 if (uncle != null && CommonConst.RBTreeConst.RED.equals(uncle.getColor())) {
                     parent.setColor(CommonConst.RBTreeConst.BLACK);
@@ -89,8 +90,27 @@ public class RBTree<T extends Comparable<T>> {
                     node = tmp;
                 }
                 // 如果叔叔节点是黑色，父节点为左子节点
+                parent.setColor(CommonConst.RBTreeConst.BLACK);
+                gradeParent.setColor(CommonConst.RBTreeConst.RED);
+                rightRotate(gradeParent);
             } else {
-
+                uncle = parent.getRightNode();
+                if (uncle != null && CommonConst.RBTreeConst.RED.equals(uncle.getColor())) {
+                    parent.setColor(CommonConst.RBTreeConst.BLACK);
+                    uncle.setColor(CommonConst.RBTreeConst.BLACK);
+                    gradeParent.setColor(CommonConst.RBTreeConst.RED);
+                    node = gradeParent;
+                    continue;
+                }
+                if (node == gradeParent.getLeftNode()) {
+                    rightRotate(gradeParent);
+                    RBNode<T> tmp = parent;
+                    parent = node;
+                    node = tmp;
+                }
+                parent.setColor(CommonConst.RBTreeConst.BLACK);
+                gradeParent.setColor(CommonConst.RBTreeConst.RED);
+                leftRotate(gradeParent);
             }
         }
     }
