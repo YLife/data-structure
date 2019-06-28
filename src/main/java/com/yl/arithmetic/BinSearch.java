@@ -16,8 +16,9 @@ public class BinSearch {
     public static int search(int array[], int target) {
         int start = 0;
         int end = array.length;
-        int mid = (start + end) / 2 + 1;
+        int mid;
         while (start < end) {
+            mid = (end - start) / 2 + start;
             if (array[mid] == target) {
                 return mid;
             } else if (array[mid] < target) {
@@ -25,14 +26,13 @@ public class BinSearch {
             } else {
                 end = mid - 1;
             }
-            mid = (start + end) / 2 + start;
         }
         return -1;
     }
 
     public static void main(String[] args) {
         int array[] = {1, 3, 6, 7, 9, 10, 20};
-        int index = search(array, 10);
+        int index = search(array, 20);
         System.out.println(index);
     }
 }
